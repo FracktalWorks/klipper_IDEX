@@ -431,4 +431,14 @@ class PrinterConfig:
             logging.exception(msg)
             raise gcode.error(msg)
         # Request a restart
-        gcode.request_restart('restart')
+        #gcode.request_restart('restart')
+        #gcode.request_restart('restart')
+        # If requested restart or no restart just flag config saved
+        restartTest = gcmd.get_int('NO_RESTART', None)
+        if restartTest is None or restartTest != 1:
+        # Request a restart
+            gcode.request_restart('restart')
+        else:
+        # flag config updated to false since config saved with no restart
+            self.save_config_pending = False
+            gcode.respond_info("Config File update without restart successful")
