@@ -404,9 +404,16 @@ class ConfigAutoSave:
             msg = "Unable to write config file during SAVE_CONFIG"
             logging.exception(msg)
             raise gcmd.error(msg)
-        # Request a restart
+        # Request a restart or not, based on NO_RESTART parameter
+        restartTest = gcmd.get_int('NO_RESTART', None)
         gcode = self.printer.lookup_object('gcode')
-        gcode.request_restart('restart')
+        if restartTest is None or restartTest != 1:
+            # Request a restart
+            gcode.request_restart('restart')
+        else:
+            # Flag config updated to false since config saved with no restart
+            self.save_config_pending = False
+            gcode.respond_info("Config File update without restart successful")
 
 
 ######################################################################
